@@ -54,7 +54,7 @@ afterEach(() => {
 describe('nezha loadPing', () => {
   it('labels every row with the v2 monitor name', async () => {
     stubService(v2Payload)
-    const data = await nezha.loadPing('1')
+    const data = await nezha.loadPing('1', 24)
     expect(data.tasks.map((t) => t.name)).toEqual(['电信-河北', '联通-河北廊坊'])
     expect(data.tasks.map((t) => t.id)).toEqual([7, 8])
     expect(data.tasks[0].avg).toBe(20)
@@ -64,14 +64,14 @@ describe('nezha loadPing', () => {
 
   it('keeps the v1 service name working', async () => {
     stubService(v1Payload)
-    const data = await nezha.loadPing('1')
+    const data = await nezha.loadPing('1', 24)
     expect(data.tasks.map((t) => t.name)).toEqual(['移动-河北'])
     expect(data.tasks.map((t) => t.id)).toEqual([3])
   })
 
   it('keeps each point attached to its own task', async () => {
     stubService(v2Payload)
-    const data = await nezha.loadPing('1')
+    const data = await nezha.loadPing('1', 24)
     const byTask = new Map<number, number[]>()
     for (const p of data.points) byTask.set(p.task, [...(byTask.get(p.task) ?? []), p.value])
     expect(byTask.get(7)).toEqual([10, 20, 30])
